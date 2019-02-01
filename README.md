@@ -30,7 +30,7 @@ pipenv install
 
 1. Create and update `config.json`:
 ```sh
-mv config.example.json config.json
+cp config.example.json config.json
 ```
 
 2. Run

@@ -4,15 +4,15 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
+"autopep8" = "*"
+rope = "*"
 
 [packages]
 nflgame = "*"
-pylint = "*"
-autopep8 = "*"
 instagramapi = {editable = true,git = "https://github.com/LevPasha/Instagram-API-python.git"}
 click = "*"
 cerberus = "*"
-rope = "*"
 
 [requires]
 python_version = "2.7"
