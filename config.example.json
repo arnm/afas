@@ -1,0 +1,10 @@
+{
+    "username": "<insta_username>",
+    "password": "<insta_password>",
+    "followers": [
+        {
+            "username": "<follower_username>",
+            "team": "NE"
+        }
+    ]
+}
