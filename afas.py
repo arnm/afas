@@ -46,6 +46,12 @@ def constantly_annoy(instapi, followers):
             # direct message from within 20yds of end zone
 
             # direct message on scoring play
+            scoring_team = ''
+            if diff.before.score_away != diff.after.score_away:
+                scoring_team = diff.before.away
+            elif diff.before.score_home != diff.after.score_home:
+                scoring_team = diff.before.home
+
             touchdown_plays = [play for play in diff.plays if play.touchdown]
             if touchdown_plays:
                 # direct message on touchdown
@@ -53,12 +59,17 @@ def constantly_annoy(instapi, followers):
                     people = [person['pk']
                               for person in followers if person['team'] == touchdown_play.team]
                     message = 'TOUCHDOWN %s!!' % touchdown_play.team
+                    print '%s to %s' % message, people
                     for person in people:
                         instapi.direct_message(message, person)
-            elif diff.before.score_away != diff.after.score_away:
-                print 'away scored'
-            elif diff.before.score_home != diff.after.score_home:
-                print 'home scored'
+            elif scoring_team:
+                # direct message on scoring play (not touchdown, field goal, safety, etc)
+                people = [person['pk']
+                          for person in followers if person['team'] != scoring_team]
+                message = 'ILL TAKE THAT! LET\'S GO %s' % scoring_team
+                print '%s to %s' % message, people
+                for person in people:
+                    instapi.direct_message(message, person)
 
         for game in completed:
             # send group message to all losers
@@ -98,7 +109,6 @@ def annoy(path):
             followers[username].update(
                 {'pk': follower['pk'], 'username': username})
 
-    # instapi.direct_message("asdf", [f['pk'] for f in followers.values()])
     # constantly_annoy(instapi, followers.values())
 
 
