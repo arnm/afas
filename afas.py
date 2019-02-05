@@ -3,6 +3,7 @@ import json
 import cerberus
 import nflgame.live
 from InstagramAPI import InstagramAPI
+import time
 
 CONFIG_SCHEMA = {
     'username': {'type': 'string', "empty": False, "required": True},
@@ -43,7 +44,9 @@ def constantly_annoy(instapi, followers):
 
         # message opposing teams on events
         for diff in diffs:
-            # direct message from within 20yds of end zone
+
+            for play in diff.plays:
+                print play.desc
 
             # direct message on scoring play
             scoring_team = ''
@@ -58,27 +61,39 @@ def constantly_annoy(instapi, followers):
                 for touchdown_play in touchdown_plays:
                     people = [person['pk']
                               for person in followers if person['team'] == touchdown_play.team]
-                    message = 'TOUCHDOWN %s!!' % touchdown_play.team
-                    print '%s to %s' % message, people
+                    message = 'TOUCHDOWN %s!! %s!!' % (
+                        touchdown_play.team, diff.plays[0].desc)
+
                     for person in people:
+                        print '%s to %s' % (message, person)
                         instapi.direct_message(message, person)
+                        time.sleep(2)
             elif scoring_team:
                 # direct message on scoring play (not touchdown, field goal, safety, etc)
                 people = [person['pk']
                           for person in followers if person['team'] != scoring_team]
-                message = 'ILL TAKE THAT! LET\'S GO %s' % scoring_team
-                print '%s to %s' % message, people
+                message = "I'LL TAKE THAT! LET'S GO %s! %s!" % (
+                    scoring_team, diff.plays[0].desc)
                 for person in people:
+                    print '%s to %s' % (message, person)
                     instapi.direct_message(message, person)
+                    time.sleep(2)
 
         for game in completed:
             # send group message to all losers
             losers = [loser['pk']
                       for loser in followers if loser['team'] == game.loser]
 
-            message = '%s WINNNSS!!! HAHAHA BETTER LUCK NEXT TIME!' % game.winner
-            print 'messaging %s to %s' % (message, losers)
-            instapi.direct_message(message, losers)
+            winners = [winner['pk']
+                       for winner in followers if winner['team'] == game.winner]
+
+            loser_message = '%s WINNNSS!!! HAHAHA BETTER LUCK NEXT TIME!' % game.winner
+            print 'messaging %s to %s' % (loser_message, losers)
+            instapi.direct_message(loser_message, losers)
+
+            winner_message = '%s WINNNSS!!! LETS GO!!' % game.winner
+            print 'messaging %s to %s' % (winner_message, winners)
+            instapi.direct_message(winner_message, winners)
 
     nflgame.live.run(on_game_update)
 
@@ -109,7 +124,7 @@ def annoy(path):
             followers[username].update(
                 {'pk': follower['pk'], 'username': username})
 
-    # constantly_annoy(instapi, followers.values())
+    constantly_annoy(instapi, followers.values())
 
 
 if __name__ == '__main__':

@@ -1,6 +1,8 @@
 
 # AFAS
 
+Dev Vlog: https://youtu.be/6Y0cBnlee2Y
+
 AFAS, "Anoying Friends About Sports", is a bot which automatically
 notifies your friends, or enemies, when a rival team scores.
 
